@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .paystack import PayStack
 import secrets
 
 
@@ -131,20 +130,4 @@ class PayWithPaystack(models.Model):
             self.ref = ref
         super(PayWithPaystack, self).save(*args, **kwargs)
                 
-    def verify_payment(self):
-        ''' 
-            This method calls the verify_payment method of the Paystack class wew created
-            and then checks if amount paid was the amount expected to paid
-            
-            returns a boolean value
-        '''
-        paystack = PayStack()
-        status, result = paystack.verify_payment(self.ref, self.amount)  
-        if status:
-            if result['amount']  == self.amount:
-                self.verified = True
-            self.save()
-        if self.verified:
-            return True
-        return False
 

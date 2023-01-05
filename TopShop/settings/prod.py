@@ -42,23 +42,23 @@ DEBUG_PROPAGATE_EXCEPTIONS = True
 COMPRESS_ENABLED = os.environ.get('COMPRESS_ENABLED', False)
 
 
-# DATABASES = {
+DATABASES = {
 
-#     'default': {
+    'default': {
 
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
 
-#         'NAME': env('DATABASE_NAME'),
+        'NAME': env('PGDATABASE'),
 
-#         'USER': env('DATABASE_USER'),
+        'USER': env('PGUSER'),
 
-#         'PASSWORD': env('DATABASE_PASSWORD'),
+        'PASSWORD': env('PGPASSWORD'),
     
-#         'HOST': env('DATABASE_HOST'),
+        'HOST': env('PGHOST'),
 
-#         'PORT': '5432',
+        'PORT': env('PGPORT'),
 
-#     }
+    }
 
-# }
+}
 

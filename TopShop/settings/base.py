@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
 
     "corsheaders",
+    "storages"
 
 ]
 
@@ -161,6 +162,17 @@ STATICFILES_DIRS = [BASE_DIR / 'frontend/build/static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+AWS_ACCESS_KEY_ID = "AKIA3UELUKBBAM3CZQFT"
+AWS_SECRET_ACCESS_KEY = "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"
+AWS_STORAGE_BUCKET_NAME = "e-com-app"
+# AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -4,7 +4,7 @@
       "builder": "NIXPACKS"
     },
     "deploy": {
-      "startCommand": "gunicorn newsHacker.wsgi --log-file -",
+      "startCommand": "gunicorn TopShop.wsgi --log-file -",
       "restartPolicyType": "ON_FAILURE",
       "restartPolicyMaxRetries": 10
     }

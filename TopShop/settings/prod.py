@@ -1,8 +1,7 @@
 from .base import *
-import django_heroku 
 import os
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 DEBUG = False
 
 # Debugging in heroku live
@@ -63,5 +62,3 @@ DATABASES = {
 
 }
 
-
-django_heroku.settings(locals())

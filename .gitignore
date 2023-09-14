@@ -1,9 +1,18 @@
+myvenv/
+__pycache__/
+media_root/
+db.sqlite3
+
+# prod
+migrations
+/media
+/fronend2
 *.pyc
 /backend/db.sqlite3
 .DS_Store
 .env
 */settings/local.py
-/staticfiles/*
+
 /mediafiles/*
 __pycache__/
 /.vscode/
@@ -63,7 +72,6 @@ __pycache__/
 # Distribution / packaging
 .Python
 develop-eggs/
-dist/
 downloads/
 eggs/
 .eggs/

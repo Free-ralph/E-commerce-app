@@ -1,8 +1,7 @@
 from django.contrib.auth import password_validation as validators
 from django.core import exceptions
 from rest_framework import serializers
-from backend.models import Product, Category, Order, PayWithPaystack, Favourites
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from backend.models import Product, Category, Order, PayWithPaystack, Favourites, Coupon
 from django.contrib.auth.models import User
 
 
@@ -52,22 +51,19 @@ class UserSerializer(serializers.ModelSerializer):
             'is_active'
         )
 
-
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-    @classmethod
-    def get_token(cls, user):
-        token = super().get_token(user)
-
-        # Add custom claims
-        token['username'] = user.username
-
-        return token
-
+class AccountInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "id", 
+            "username"
+        ]
 
 class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
+        depth = 1
         fields = '__all__'
 
 class GetProductSerializer(serializers.ModelSerializer):
@@ -85,6 +81,20 @@ class CategorySerializer(serializers.ModelSerializer):
             'name'
         ]
 
+class CartSizeSerializer(serializers.Serializer):
+    size = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = [
+            'size'
+        ]
+
+    def get_size(self, obj):
+        return obj.order_product.count()
+    
+
+
 class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -100,6 +110,7 @@ class CartItemSerializer(serializers.ModelSerializer):
             'shipping_address',
             'get_summed_price',
             'get_total_price',
+            'get_summed_coupon',
         )
         depth = 2
 
@@ -107,8 +118,15 @@ class QuantitySerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     id = serializers.IntegerField()
 
-class CouponSerializer(serializers.Serializer):
-    coupon_code = serializers.CharField()
+class CouponSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coupon
+        fields = "__all__"
+        extra_kwargs = {
+            'coupon_name' : {'required' : False},
+            'discount' : {'required' : False}
+        }
+
 
 class ShippingDetialsSerializer(serializers.Serializer):
     email = serializers.EmailField()

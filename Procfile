@@ -1,1 +1,0 @@
-web: gunicorn TopShop.wsgi --log-file -

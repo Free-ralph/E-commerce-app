@@ -1,64 +1,62 @@
 from .base import *
-import os
+from decouple import config
+import dj_database_url
+
 
 ALLOWED_HOSTS = ["*"]
-DEBUG = False
 
-# Debugging in heroku live
+
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
-                       'pathname=%(pathname)s lineno=%(lineno)s ' +
-                       'funcname=%(funcName)s %(message)s'),
-            'datefmt': '%Y-%m-%d %H:%M:%S'
+    'disable_existing_loggers': True,
+    # 'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
         },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'django.server': {
+            '()': 'django.utils.log.ServerFormatter',
+            'format': '[{server_time}] {message}',
+            'style': '{',
         }
     },
     'handlers': {
-        'null': {
-            'level': 'DEBUG',
-            'class': 'logging.NullHandler',
-        },
         'console': {
-            'level': 'DEBUG',
+            'level': 'INFO',
+            #'filters': ['require_debug_true'],
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose'
+        },
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'django.server',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            #'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
         }
     },
     'loggers': {
-        'testlogger': {
-            'handlers': ['console'],
+        'django': {
+            'handlers': ['console', 'mail_admins'],
             'level': 'INFO',
-        }
+        },
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': False,
+        },
     }
 }
-
-DEBUG_PROPAGATE_EXCEPTIONS = True
-COMPRESS_ENABLED = os.environ.get('COMPRESS_ENABLED', False)
-
-
-DATABASES = {
-
-    'default': {
-
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-
-        'NAME': env('PGDATABASE'),
-
-        'USER': env('PGUSER'),
-
-        'PASSWORD': env('PGPASSWORD'),
-    
-        'HOST': env('PGHOST'),
-
-        'PORT': env('PGPORT'),
-
-    }
-
-}
+DATABASES = {  
+    'default': dj_database_url.config(
+        default=config('DB_URL')
+    )
+}  
 

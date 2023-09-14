@@ -4,15 +4,15 @@ from backend.models import (Category, Coupon, Favourites, Product,
 from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework import status
 from .serializer import (
-    CouponSerializer, ProductSerializer, CategorySerializer, MyTokenObtainPairSerializer, UserSerializer,
+    CartSizeSerializer, CouponSerializer, ProductSerializer, CategorySerializer, UserSerializer,
     RegisterUserSerializer, GetProductSerializer, CartItemSerializer, QuantitySerializer,
-    CouponSerializer, ShippingDetialsSerializer, PaymentSerializer, FavouritesSerializer
+    ShippingDetialsSerializer, PaymentSerializer, FavouritesSerializer, 
+    AccountInfoSerializer
 )
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.views import TokenObtainPairView
 import random
 import string
 
@@ -27,10 +27,6 @@ def create_random_ID():
         if not order.exists():
             break
     return id
-
-
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
 
 
 class ProductListApiView(ListAPIView):
@@ -86,7 +82,25 @@ class RegisterUserApiView(GenericAPIView):
             'message': 'Account created Successfully'
         })
 
+class AccountInfoApiView(GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = AccountInfoSerializer
 
+    def get(self, *args, **kwargs):
+        return Response(self.serializer_class(self.request.user).data)
+    
+class CartSizeApiView(GenericAPIView):
+    permission_classes = [IsAuthenticated, ]
+    serializer_class = CartSizeSerializer
+
+    def get(self, *args, **kwargs):
+        try:
+            order = Order.objects.get(user__id = self.request.user.id , is_ordered = False)
+            return Response(self.serializer_class(order).data)
+        except ObjectDoesNotExist:
+            return Response({"size" : 0})
+        
+        
 class AddToCartApiView(GenericAPIView):
     serializer_class = GetProductSerializer
     permission_classes = [IsAuthenticated, ]
@@ -137,15 +151,14 @@ class UpdateQuantityView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
-        print(request.data)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             quantity = serializer.validated_data['quantity']
-            id = serializer.validated_data['id']
+            Id = serializer.validated_data['id']
             try:
                 order = Order.objects.get(user=request.user, is_ordered=False)
                 try:
-                    order_product = order.order_product.get(id=id)
+                    order_product = order.order_product.get(id=Id)
                 except ObjectDoesNotExist as e:
                     return Response({'error': 'Someting went wrong'}, status=status.HTTP_404_NOT_FOUND)
             except ObjectDoesNotExist as e:
@@ -179,6 +192,15 @@ class RemoveItemApiView(GenericAPIView):
 
         return Response({'message': 'item removed'})
 
+class GetDummyCoupon(GenericAPIView):
+    serializer_class = CouponSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get(self, *args, **kwargs):
+        coupon_code = ''.join(random.choices(string.digits + string.ascii_letters, k=5))
+        coupon = Coupon.objects.create(coupon_name = "dummy", coupon_code = coupon_code, discount = 2000)
+        return Response(self.get_serializer(coupon).data)
+
 
 class ApplyCouponApiView(GenericAPIView):
     serializer_class = CouponSerializer
@@ -190,15 +212,15 @@ class ApplyCouponApiView(GenericAPIView):
             try:
                 coupon = Coupon.objects.get(coupon_code=coupon_code)
             except ObjectDoesNotExist:
-                return Response({'message': "Coupon doesn't exist"}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'coupon': ["Coupon doesn't exist"]}, status=status.HTTP_404_NOT_FOUND)
 
             try:
                 order = Order.objects.get(user=request.user, is_ordered=False)
             except ObjectDoesNotExist:
-                return Response({'message': "Somthing has gone wrong, we'll fix it"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({'coupon': ["Somthing has gone wrong, we'll fix it"]}, status=status.HTTP_400_BAD_REQUEST)
 
-            if order.coupon.filter(coupon_name=coupon.coupon_name).exists():
-                return Response({'message': 'coupon has been used already'}, status=status.HTTP_400_BAD_REQUEST)
+            if order.coupon.filter(coupon_code=coupon.coupon_code).exists():
+                return Response({'coupon': ['coupon has already been used']}, status=status.HTTP_400_BAD_REQUEST)
             order.coupon.add(coupon)
             order.save()
             return Response({'message': "Coupon added successfully"})
@@ -268,8 +290,8 @@ class ConfirmPaymentApiView(GenericAPIView):
             return Response({'message': 'Something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
         order.is_ordered = True
-        if payment_method == 'PS':
-            order.is_paid = True
+        order.is_paid = True
+        order.order_product.update(is_ordered = True)
         order.save()
         return Response({'message': 'Payment Successful'})
 

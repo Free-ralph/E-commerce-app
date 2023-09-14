@@ -1,14 +1,15 @@
 from django.urls import path
 from .views import (ProductListApiView, ProductDetial,
                     ProductByCategoryApiView, CatogoryApiView,
-                    ProductsByPrice, MyTokenObtainPairView,
+                    ProductsByPrice, CartSizeApiView,
                     RegisterUserApiView, AddToCartApiView,
                     GetCartItemsApiView, UpdateQuantityView,
                     RemoveItemApiView, ApplyCouponApiView,
-                    ShippingApiView, GetPaymentApiView, 
-                    ConfirmPaymentApiView, GetFavouritesProductsApiView, AddFavouritesApiView)
+                    ShippingApiView, GetPaymentApiView, AccountInfoApiView,
+                    ConfirmPaymentApiView, GetFavouritesProductsApiView, AddFavouritesApiView,
+                    GetDummyCoupon)
 from rest_framework_simplejwt.views import (
-    TokenRefreshView,
+    TokenRefreshView, TokenObtainPairView
 )
 
 app_name = 'api'
@@ -18,13 +19,16 @@ urlpatterns = [
     path('product/categories', CatogoryApiView.as_view(), name='category'),
     path('product/<int:pk>', ProductDetial.as_view(), name='product'),
     path('product/<str:category>',ProductByCategoryApiView.as_view(), name='product'),
-    path('token', MyTokenObtainPairView.as_view(), name='token_obtain'),
+    path('token', TokenObtainPairView.as_view(), name='token_obtain'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
     path('register', RegisterUserApiView.as_view(), name='register'),
+    path('account-info', AccountInfoApiView.as_view()),
+    path('cart-size', CartSizeApiView.as_view()),
     path('add-to-cart/<int:id>', AddToCartApiView.as_view(), name='add_to_cart'),
     path('get-cart-items', GetCartItemsApiView.as_view(), name='get_cart_items'),
     path('update-quantity', UpdateQuantityView.as_view(), name='updated_quantity'),
     path('delete-item/<int:id>', RemoveItemApiView.as_view(), name='remove_item'),
+    path('get-dummy-coupon', GetDummyCoupon.as_view()),
     path('apply-coupon', ApplyCouponApiView.as_view(), name='apply_coupon'),
     path('shipping', ShippingApiView.as_view(), name='shipping'),
     path('get-payment', GetPaymentApiView.as_view(), name='get_payment'),

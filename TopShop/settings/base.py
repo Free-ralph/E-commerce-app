@@ -3,8 +3,7 @@
 from pathlib import Path
 from datetime import timedelta
 import environ
-env = environ.Env()
-environ.Env.read_env()
+from decouple import config
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,10 +22,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'whitenoise.runserver_nostatic',   
-    'backend', 
+    'whitenoise.runserver_nostatic',
+    'backend',
 
-    #django rest framework
+    # django rest framework
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
@@ -38,14 +37,14 @@ INSTALLED_APPS = [
 
 
 REST_FRAMEWORK = {
-    
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=2),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=90),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
@@ -111,12 +110,7 @@ WSGI_APPLICATION = 'TopShop.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+
 
 
 # Password validation
@@ -155,21 +149,22 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+INTERNAL_IPS = ['127.0.0.1']
+
+VITE_APP_DIR = BASE_DIR / "frontend"
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticroots'
-STATICFILES_DIRS = [BASE_DIR / 'frontend/build/static']
+STATICFILES_DIRS = [
+    VITE_APP_DIR / "dist",
+    # BASE_DIR / "static",
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
-
-STATICFILES_STORAGE="whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # Default primary key field type
@@ -180,4 +175,3 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 
 SITE_ID = 1
-

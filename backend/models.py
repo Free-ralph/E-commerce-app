@@ -11,18 +11,19 @@ STATUS = (
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
-    category = models.CharField(max_length=200)
+    category = models.ManyToManyField("Category")
     description = models.TextField()
     popularity = models.PositiveIntegerField()
     rating = models.PositiveIntegerField()
     image = models.URLField()
-    price = models.DecimalField(decimal_places=2, max_digits=10)
+    price = models.FloatField()
 
     def __str__(self):
         return self.title
     
     def get_price(self):
         return self.price
+    
 class Favourites(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ManyToManyField('Product')
@@ -53,8 +54,8 @@ class Order(models.Model):
     is_ordered = models.BooleanField(default=False)
     status = models.CharField(max_length=2, choices=STATUS)
     is_paid = models.BooleanField(default=False)
-    shipping_address = models.OneToOneField("ShippingAddress", null=True, on_delete= models.CASCADE)
-    payment = models.OneToOneField('PayWithPaystack', related_name='order', on_delete=models.CASCADE, null=True)
+    shipping_address = models.OneToOneField("ShippingAddress", null=True, on_delete= models.CASCADE, blank = True)
+    payment = models.OneToOneField('PayWithPaystack', related_name='order', on_delete=models.CASCADE, null=True, blank = True)
 
 
     def __str__(self):
@@ -79,7 +80,7 @@ class Order(models.Model):
         total = 0
         if self.delivery_fee:
             total +=  self.delivery_fee
-        total += self.get_summed_price() - self.get_summed_coupon()
+        total = self.get_summed_price() - self.get_summed_coupon()
         return total + 1500
 
 
@@ -95,7 +96,7 @@ class Category(models.Model):
 class Coupon(models.Model):
     coupon_name = models.CharField(max_length=40)
     coupon_code = models.CharField(max_length=5)
-    discount = models.FloatField()
+    discount = models.FloatField(null = True, blank = True)
 
     def __str__(self):
         return self.coupon_name

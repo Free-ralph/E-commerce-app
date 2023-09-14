@@ -2,10 +2,19 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from decouple import config
+
+DEBUG = config('DEBUG').lower() in ('true', 't', '1')
+
+
 
 
 def main():
-    """Run administrative tasks."""
+    if DEBUG:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green.settings.dev')
+    else:
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green.settings.prod')
+        
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.dev')
     try:
         from django.core.management import execute_from_command_line

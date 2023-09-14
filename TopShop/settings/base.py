@@ -7,7 +7,7 @@ from decouple import config
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-SECRET_KEY = 'django-insecure-msnpd@o0+9m^%88jwa#*1+87&vb$uk6d43_^0g=avb(p%8*jxg'
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 
 ALLOWED_HOSTS = []
@@ -148,6 +148,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = 'topshop'
 
 INTERNAL_IPS = ['127.0.0.1']
 

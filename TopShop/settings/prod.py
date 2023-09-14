@@ -4,7 +4,7 @@ import dj_database_url
 
 
 ALLOWED_HOSTS = ["*"]
-
+DEBUG = False
 
 LOGGING = {
     'version': 1,

@@ -11,11 +11,11 @@ DEBUG = config('DEBUG').lower() in ('true', 't', '1')
 
 def main():
     if DEBUG:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green.settings.dev')
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.dev')
     else:
-        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'green.settings.prod')
-        
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.dev')
+        os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.prod')
+
+    
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

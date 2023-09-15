@@ -132,3 +132,12 @@ class PayWithPaystack(models.Model):
         super(PayWithPaystack, self).save(*args, **kwargs)
                 
 
+class RandomUsers(models.Model):
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=300)
+    name = models.CharField(max_length=200, null = True)
+    is_used = models.BooleanField(default=False)
+    email = models.EmailField(null=True)
+
+    def __str__(self):
+        return self.username

@@ -11,16 +11,19 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useStateContext } from "../context/StateContextProvider";
 import { useNavigate } from "react-router-dom";
 import { FadeVariant } from "../utils/Variants";
+import Spinner from "./Spinner";
 
 type ProductProps = {
   filteredProducts: ProductType[];
   products: ProductType[];
+  isLoadingProducts: boolean;
   handleFilteredProducts: (filteredProducts: ProductType[]) => void;
 };
 const Products = ({
   products,
   filteredProducts,
   handleFilteredProducts,
+  isLoadingProducts,
 }: ProductProps) => {
   const queryClient = useQueryClient();
   const { handleSnackMessage } = useStateContext();
@@ -37,7 +40,7 @@ const Products = ({
   const [activeProductDetail, setactiveProductDetail] = useState<ProductType>();
   const [searchValue, setsearchValue] = useState("");
 
-  const { mutate: addToCartMutate } = useMutation({
+  const { mutate: addToCartMutate} = useMutation({
     mutationFn: (id: number) => axiosPrivate.get(`add-to-cart/${id}`),
     onSuccess: () => {
       handleSnackMessage("item added to cart successfully", "success");
@@ -106,42 +109,50 @@ const Products = ({
               )}
             </div>
           </div>
-          <AnimatePresence>
-            <m.div
-              variants={FadeVariant}
-              key={currentPage}
-              initial="hidden"
-              animate="visible"
-              exit="hidden"
-              className="flex flex-wrap gap-6 lg:gap-5 justify-between mt-2 md:h-[485px] md:overflow-scroll"
-            >
-              {CurrentProducts.map((product, i) => (
-                <Card
-                  key={i}
-                  product={product}
-                  addProductToCart={addProductToCart}
-                  handleOpenProductDetail={handleOpenProductDetail}
+          {isLoadingProducts ? (
+            <div className="w-full justify-center flex mt-[8rem]">
+              <Spinner />
+            </div>
+          ) : (
+            <>
+              <AnimatePresence>
+                <m.div
+                  variants={FadeVariant}
+                  key={currentPage}
+                  initial="hidden"
+                  animate="visible"
+                  exit="hidden"
+                  className="flex flex-wrap gap-6 lg:gap-5 justify-between mt-2 md:h-[485px] md:overflow-scroll"
+                >
+                  {CurrentProducts.map((product, i) => (
+                    <Card
+                      key={i}
+                      product={product}
+                      addProductToCart={addProductToCart}
+                      handleOpenProductDetail={handleOpenProductDetail}
+                    />
+                  ))}
+                </m.div>
+              </AnimatePresence>
+              <div className="flex m-auto mt-5">
+                <Pagination
+                  count={Math.ceil(filteredProducts.length / productsPerPage)}
+                  page={currentPage}
+                  defaultPage={1}
+                  color="standard"
+                  size="small"
+                  onChange={paginate}
+                  shape="rounded"
+                  sx={{
+                    "& .Mui-selected": {
+                      backgroundColor: "#ec4899 !important",
+                      color: "#f7f7f8",
+                    },
+                  }}
                 />
-              ))}
-            </m.div>
-          </AnimatePresence>
-          <div className="flex m-auto mt-5">
-            <Pagination
-              count={Math.ceil(filteredProducts.length / productsPerPage)}
-              page={currentPage}
-              defaultPage={1}
-              color="standard"
-              size="small"
-              onChange={paginate}
-              shape="rounded"
-              sx={{
-                "& .Mui-selected": {
-                  backgroundColor: "#ec4899 !important",
-                  color: "#f7f7f8",
-                },
-              }}
-            />
-          </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
       {activeProductDetail ? (

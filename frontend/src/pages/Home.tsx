@@ -10,7 +10,7 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 const Home = () => {
   const { handleSnackMessage, handleOpenSideDrawer } = useStateContext();
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-  const { data: products } = useQuery({
+  const { data: products, isLoading } = useQuery({
     queryKey: ["products"],
     queryFn: () =>
       axios.get<ProductType[]>("/products").then((res) => res.data),
@@ -36,6 +36,7 @@ const Home = () => {
       <Products
         products={products ? products : []}
         filteredProducts={filteredProducts}
+        isLoadingProducts = {isLoading}
         handleFilteredProducts={handleFilteredProducts}
       />
       <div

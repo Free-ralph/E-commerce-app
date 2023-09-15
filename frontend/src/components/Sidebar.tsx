@@ -8,6 +8,7 @@ import CachedIcon from "@mui/icons-material/Cached";
 import { CategoryType, ProductType } from "../types/api";
 import { useQuery } from "react-query";
 import axios from "../api/axios";
+import Spinner from "./Spinner";
 
 type SideBarProps = {
   products: ProductType[];
@@ -58,7 +59,7 @@ const SideBarContent = ({
   const [priceRange, setPriceRange] = useState(0);
   const [isPriceFilterActive, setIsPriceFilterActive] = useState(false);
 
-  const { data: categories } = useQuery({
+  const { data: categories, isLoading: isLoadingCategories } = useQuery({
     queryKey: ["categories"],
     queryFn: () =>
       axios.get<CategoryType[]>("/product/categories").then((res) => res.data),
@@ -145,26 +146,35 @@ const SideBarContent = ({
         >
           <CloseIcon />
         </div>
-        {categories && (
-          <div className="">
-            <p className="mt-10 font-bold">Categories</p>
-
-            {categories.map((category) => (
-              <div className="flex items-center flex-row h-8" key={category.id}>
-                <input
-                  type="checkbox"
-                  name="category"
-                  value={category.name}
-                  checked={category.name === checkedCategory}
-                  onChange={(e) => handleCheckbox(e)}
-                  className="mr-3 rounded-sm border-gray-400 border-1 bg-secondary checked:text-pink-500 focus:ring-pink-500"
-                />
-                <span className={isChecked(category.name)}>
-                  {category.name}
-                </span>
-              </div>
-            ))}
+        {isLoadingCategories ? (
+          <div className="w-full flex justify-center">
+            <Spinner />
           </div>
+        ) : (
+          categories && (
+            <div className="">
+              <p className="mt-10 font-bold">Categories</p>
+
+              {categories.map((category) => (
+                <div
+                  className="flex items-center flex-row h-8"
+                  key={category.id}
+                >
+                  <input
+                    type="checkbox"
+                    name="category"
+                    value={category.name}
+                    checked={category.name === checkedCategory}
+                    onChange={(e) => handleCheckbox(e)}
+                    className="mr-3 rounded-sm border-gray-400 border-1 bg-secondary checked:text-pink-500 focus:ring-pink-500"
+                  />
+                  <span className={isChecked(category.name)}>
+                    {category.name}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )
         )}
         <div className=" mr-10 mt-10">
           <span className="font-bold text-primary">Price range</span>

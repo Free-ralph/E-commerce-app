@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useMutation } from "react-query";
 import { useStateContext } from "../context/StateContextProvider";
+import Spinner from "../components/Spinner";
 
 type shippingError = {
   first_name?: string[];
@@ -29,7 +30,7 @@ const Shipping = () => {
     address: [],
   });
 
-  const { mutate: addShipping } = useMutation({
+  const { mutate: addShipping, isLoading } = useMutation({
     mutationFn: () =>
       axiosPrivate.post("/shipping", {
         first_name: firstName,
@@ -127,12 +128,13 @@ const Shipping = () => {
                 {error}
               </p>
             ))}
-          <input
+          <button
             type="submit"
-            required={true}
-            className="mt-3 bg-pink-500 rounded-xl m-auto border-2 px-5 hover:border-primary hover:bg-secondary hover:border-1 hover:text-primary text-center font-semibold py-2 flex items-center justify-center cursor-pointer transition-all delay-75 text-secondary"
-            value="Submit"
-          />
+            disabled={isLoading}
+            className="mt-3 bg-pink-500 rounded-xl m-auto border-2 w-[6rem] h-[3.5rem] hover:border-primary hover:bg-secondary hover:border-1 hover:text-primary text-center font-semibold flex items-center justify-center cursor-pointer transition-all delay-75 text-secondary"
+          >
+            {isLoading ? <Spinner color="#fff" /> : "Submit"}
+          </button>
         </form>
       </div>
     </div>

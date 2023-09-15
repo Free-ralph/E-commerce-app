@@ -12,7 +12,7 @@ import { FadeVariant } from "../utils/Variants";
 import Spinner from "../components/Spinner";
 
 const Cart = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [coupon, setcoupon] = useState("");
   const [couponError, setcouponError] = useState<any>();
   const { handleSnackMessage } = useStateContext();
@@ -37,7 +37,7 @@ const Cart = () => {
     mutationFn: (coupon: string) =>
       axiosPrivate.post("/apply-coupon", { coupon_code: coupon }),
     onSuccess: () => {
-      queryClient.invalidateQueries("shopingCart")
+      queryClient.invalidateQueries("shopingCart");
       handleSnackMessage("coupon applied", "success");
     },
     onError: (err: any) => {
@@ -75,7 +75,13 @@ const Cart = () => {
             animate="visible"
             exit="hidden"
           >
-            <EnhancedTable shopingCart={shoppingQuery.data} />
+            {shoppingQuery.isRefetching ? (
+              <div className="w-full flex justify-center mt-5">
+                <Spinner />
+              </div>
+            ) : (
+              <EnhancedTable shopingCart={shoppingQuery.data} />
+            )}
             <div className="flex flex-col md:flex-row w-full justify-between mt-5 text-primary p-3">
               <div className=" md:w-[48%]">
                 <form className="">
@@ -109,9 +115,13 @@ const Cart = () => {
                         onClick={() => applyCoupon(coupon)}
                         className="text-sm md:text-base h-[3rem] ml-1 bg-pink-500 rounded-xl m-auto border-2 w-[9rem]  md:w-[11rem] md:px-5 hover:border-primary hover:bg-secondary hover:border-1 hover:text-primary text-center font-semibold py-2 flex items-center justify-center cursor-pointer transition-all delay-75 text-secondary"
                         type="button"
-                        disabled = {isApplyingCoupon}
+                        disabled={isApplyingCoupon}
                       >
-                        {isApplyingCoupon ? <Spinner color="#fff" /> : " Apply Coupon"}
+                        {isApplyingCoupon ? (
+                          <Spinner color="#fff" />
+                        ) : (
+                          " Apply Coupon"
+                        )}
                       </button>
                     </div>
                     {couponError && (

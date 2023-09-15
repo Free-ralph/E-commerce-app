@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, Order, PayWithPaystack, Favourites, Coupon
+from .models import Product, Category, Order, PayWithPaystack, Favourites, Coupon, RandomUsers
 
 class OrderAdmin(admin.ModelAdmin):
     readonly_fields = (
@@ -16,3 +16,4 @@ admin.site.register(Order, OrderAdmin)
 admin.site.register(PayWithPaystack)
 admin.site.register(Favourites)
 admin.site.register(Coupon)
+admin.site.register(RandomUsers)

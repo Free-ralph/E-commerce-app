@@ -1,7 +1,7 @@
 from django.contrib.auth import password_validation as validators
 from django.core import exceptions
 from rest_framework import serializers
-from backend.models import Product, Category, Order, PayWithPaystack, Favourites, Coupon
+from backend.models import Product, Category, Order, PayWithPaystack, Favourites, Coupon, RandomUsers
 from django.contrib.auth.models import User
 
 
@@ -39,7 +39,12 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         )
         return user
 
-        
+
+
+class RandomUserSerializer(serializers.ModelSerializer): 
+    class Meta:
+        model = RandomUsers
+        fields = "__all__"  
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

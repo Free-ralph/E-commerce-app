@@ -7,7 +7,7 @@ from .views import (ProductListApiView, ProductDetial,
                     RemoveItemApiView, ApplyCouponApiView,
                     ShippingApiView, GetPaymentApiView, AccountInfoApiView,
                     ConfirmPaymentApiView, GetFavouritesProductsApiView, AddFavouritesApiView,
-                    GetDummyCoupon)
+                    GetDummyCoupon, RandomAccountApiView)
 from rest_framework_simplejwt.views import (
     TokenRefreshView, TokenObtainPairView
 )
@@ -35,4 +35,5 @@ urlpatterns = [
     path('confirm-payment/<str:payment_method>', ConfirmPaymentApiView.as_view(), name='confirm_payment'),
     path('favourites', GetFavouritesProductsApiView.as_view(), name='favourites'),
     path('add-favourite/<int:id>', AddFavouritesApiView.as_view(), name='add_favourite'),
+    path('random_account/', RandomAccountApiView.as_view()),
 ]

@@ -1,16 +1,15 @@
 from backend.models import (Category, Coupon, Favourites, Product,
                             OrderProduct, Order, PayWithPaystack, ShippingAddress,
-                            Favourites)
+                            Favourites, RandomUsers)
 from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework import status
 from .serializer import (
     CartSizeSerializer, CouponSerializer, ProductSerializer, CategorySerializer, UserSerializer,
     RegisterUserSerializer, GetProductSerializer, CartItemSerializer, QuantitySerializer,
     ShippingDetialsSerializer, PaymentSerializer, FavouritesSerializer, 
-    AccountInfoSerializer
+    AccountInfoSerializer, RandomUserSerializer
 )
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 import random
@@ -28,6 +27,12 @@ def create_random_ID():
             break
     return id
 
+class RandomAccountApiView(GenericAPIView):
+    serializer_class = RandomUserSerializer
+
+    def get(self, *args, **kwargs):
+        random_users = RandomUsers.objects.all().filter(is_used = False)
+        return Response(self.get_serializer(random.choice(random_users)).data)
 
 class ProductListApiView(ListAPIView):
     queryset = Product.objects.all()

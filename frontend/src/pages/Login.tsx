@@ -176,8 +176,8 @@ const Login = () => {
                 onClick={LoginRandomUser}
               >
                 {randomUserIsFetching ? (
-                  <span>
-                    <Spinner size = {25} color="#" />
+                  <span className="mr-4">
+                    <Spinner size={25} />
                   </span>
                 ) : (
                   randomUser && randomUser.name

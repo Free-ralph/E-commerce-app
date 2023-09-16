@@ -133,24 +133,24 @@ const Products = ({
                     />
                   ))}
                 </m.div>
+                <div className="flex m-auto mt-2 pb-4 md:mb-0">
+                  <Pagination
+                    count={Math.ceil(filteredProducts.length / productsPerPage)}
+                    page={currentPage}
+                    defaultPage={1}
+                    color="standard"
+                    size="small"
+                    onChange={paginate}
+                    shape="rounded"
+                    sx={{
+                      "& .Mui-selected": {
+                        backgroundColor: "#ec4899 !important",
+                        color: "#f7f7f8",
+                      },
+                    }}
+                  />
+                </div>
               </AnimatePresence>
-              <div className="flex m-auto mt-5">
-                <Pagination
-                  count={Math.ceil(filteredProducts.length / productsPerPage)}
-                  page={currentPage}
-                  defaultPage={1}
-                  color="standard"
-                  size="small"
-                  onChange={paginate}
-                  shape="rounded"
-                  sx={{
-                    "& .Mui-selected": {
-                      backgroundColor: "#ec4899 !important",
-                      color: "#f7f7f8",
-                    },
-                  }}
-                />
-              </div>
             </>
           )}
         </div>

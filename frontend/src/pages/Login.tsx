@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import Button from "../components/Button";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import { useStateContext } from "../context/StateContextProvider";
@@ -19,7 +18,7 @@ type RandomUserType = {
   username: string;
   password: string;
   name: string;
-  id : number;
+  id: number;
 };
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -29,7 +28,7 @@ const Login = () => {
   );
   const { handleSnackMessage } = useStateContext();
   const navigate = useNavigate();
-  const { setAuth} = useAuthStateContext();
+  const { setAuth } = useAuthStateContext();
 
   const {
     data: randomUser,
@@ -70,7 +69,7 @@ const Login = () => {
             username,
             password,
             name,
-            id
+            id,
           })
           .then((res) => res.data),
       onSuccess: (res) => {
@@ -102,7 +101,7 @@ const Login = () => {
         username: randomUser.username,
         password: randomUser.password,
         name: randomUser.name,
-        id : randomUser.id
+        id: randomUser.id,
       });
     }
   };
@@ -198,12 +197,16 @@ const Login = () => {
               </Link>
             </p>
           </div>
-          <Button
-            text={isLoading || loginRandomIsLoading ? "" : "Submit"}
-            style="w-[6rem] h-[3rem] mt-3"
-            icon={(isLoading || loginRandomIsLoading) && <Spinner size = {30} color="#fff" />}
+          <button
             disabled={isLoading || loginRandomIsLoading}
-          />
+            className="w-[6rem] h-[3rem] mt-3 rounded-xl bg-pink-500  border-1 text-secondary text-sm  font-bold transition-all delay-[10] flex items-center justify-center"
+          >
+            {isLoading || loginRandomIsLoading ? (
+              <Spinner size={30} color="#fff" />
+            ) : (
+              "Submit"
+            )}
+          </button>
         </motion.form>
       </AnimatePresence>
     </div>

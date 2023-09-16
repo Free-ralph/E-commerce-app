@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Button from "../components/Button";
 import axios from "../api/axios";
 import { useStateContext } from "../context/StateContextProvider";
 import { Link } from "react-router-dom";
@@ -139,12 +138,12 @@ const Register = () => {
               </Link>
             </p>
           </div>
-          <Button
-            text={isLoading ? "" : "Submit"}
-            style="w-[6rem] h-[3rem] mt-3"
-            icon={isLoading && <Spinner size={30} color="#fff"/>}
+          <button
             disabled={isLoading}
-          />
+            className="w-[6rem] h-[3rem] mt-3 rounded-xl bg-pink-500  border-1 text-secondary text-sm  font-bold transition-all delay-[10] flex items-center justify-center"
+          >
+            {isLoading ? <Spinner size={30} color="#fff" /> : "Submit"}
+          </button>
         </motion.form>
       </AnimatePresence>
     </div>

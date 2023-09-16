@@ -6,12 +6,13 @@ from rest_framework import status
 from .serializer import (
     CartSizeSerializer, CouponSerializer, ProductSerializer, CategorySerializer, UserSerializer,
     RegisterUserSerializer, GetProductSerializer, CartItemSerializer, QuantitySerializer,
-    ShippingDetialsSerializer, PaymentSerializer, FavouritesSerializer, 
+    ShippingDetialsSerializer, PaymentSerializer, FavouritesSerializer,
     AccountInfoSerializer, RandomUserSerializer
 )
 from rest_framework.response import Response
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 import random
 import string
 
@@ -27,12 +28,36 @@ def create_random_ID():
             break
     return id
 
+
 class RandomAccountApiView(GenericAPIView):
     serializer_class = RandomUserSerializer
 
     def get(self, *args, **kwargs):
-        random_users = RandomUsers.objects.all().filter(is_used = False)
+        random_users = RandomUsers.objects.all().filter(is_used=False)
         return Response(self.get_serializer(random.choice(random_users)).data)
+
+
+class LoginRandomUserApiView(GenericAPIView):
+    serializer_class = RegisterUserSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializedData = self.get_serializer(data=request.data)
+        if serializedData.is_valid():
+            user = serializedData.save()
+            # remember you defined the create method in the RegisterSerializer to return the instance
+            # so you',ll have to explicitly run save on the returned instance
+            user.save()
+            refresh = RefreshToken.for_user(user)
+            randomUserId = request.data['id']
+            randomUser_qs = RandomUsers.objects.filter(id=randomUserId)
+            if randomUser_qs.exists():
+                randomUser = randomUser_qs[0]
+                randomUser.is_used = True
+                randomUser.save()
+            return Response({"access": str(refresh.access_token), "refresh": str(refresh)})
+
+        return Response(serializedData.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProductListApiView(ListAPIView):
     queryset = Product.objects.all()
@@ -87,25 +112,28 @@ class RegisterUserApiView(GenericAPIView):
             'message': 'Account created Successfully'
         })
 
+
 class AccountInfoApiView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = AccountInfoSerializer
 
     def get(self, *args, **kwargs):
         return Response(self.serializer_class(self.request.user).data)
-    
+
+
 class CartSizeApiView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = CartSizeSerializer
 
     def get(self, *args, **kwargs):
         try:
-            order = Order.objects.get(user__id = self.request.user.id , is_ordered = False)
+            order = Order.objects.get(
+                user__id=self.request.user.id, is_ordered=False)
             return Response(self.serializer_class(order).data)
         except ObjectDoesNotExist:
-            return Response({"size" : 0})
-        
-        
+            return Response({"size": 0})
+
+
 class AddToCartApiView(GenericAPIView):
     serializer_class = GetProductSerializer
     permission_classes = [IsAuthenticated, ]
@@ -197,13 +225,16 @@ class RemoveItemApiView(GenericAPIView):
 
         return Response({'message': 'item removed'})
 
+
 class GetDummyCoupon(GenericAPIView):
     serializer_class = CouponSerializer
     permission_classes = [IsAuthenticated, ]
 
     def get(self, *args, **kwargs):
-        coupon_code = ''.join(random.choices(string.digits + string.ascii_letters, k=5))
-        coupon = Coupon.objects.create(coupon_name = "dummy", coupon_code = coupon_code, discount = 2000)
+        coupon_code = ''.join(random.choices(
+            string.digits + string.ascii_letters, k=5))
+        coupon = Coupon.objects.create(
+            coupon_name="dummy", coupon_code=coupon_code, discount=2000)
         return Response(self.get_serializer(coupon).data)
 
 
@@ -296,7 +327,7 @@ class ConfirmPaymentApiView(GenericAPIView):
 
         order.is_ordered = True
         order.is_paid = True
-        order.order_product.update(is_ordered = True)
+        order.order_product.update(is_ordered=True)
         order.save()
         return Response({'message': 'Payment Successful'})
 
@@ -304,29 +335,28 @@ class ConfirmPaymentApiView(GenericAPIView):
 class GetFavouritesProductsApiView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = FavouritesSerializer
-    
-    
-    
+
     def get(self, request, *args, **kwargs):
-        fav, created = Favourites.objects.get_or_create(user = request.user)
+        fav, created = Favourites.objects.get_or_create(user=request.user)
 
         serializer = self.get_serializer(fav)
         return Response(serializer.data)
 
+
 class AddFavouritesApiView(GenericAPIView):
     permission_classes = [IsAuthenticated, ]
-    
+
     def get(self, request, *args, **kwargs):
         ID = kwargs['id']
         try:
-            product = Product.objects.get(id = ID)
-        except ObjectDoesNotExist :
-            return Response({'message' : 'something went wrong'}, status = status.HTTP_404_NOT_FOUND)
-        fav, created = Favourites.objects.get_or_create(user = request.user)
-        if fav.product.filter(id = product.id).exists():
+            product = Product.objects.get(id=ID)
+        except ObjectDoesNotExist:
+            return Response({'message': 'something went wrong'}, status=status.HTTP_404_NOT_FOUND)
+        fav, created = Favourites.objects.get_or_create(user=request.user)
+        if fav.product.filter(id=product.id).exists():
             fav.product.remove(product)
         else:
             fav.product.add(product)
-        
+
         fav.save()
-        return Response({'message' : 'successful'})
+        return Response({'message': 'successful'})

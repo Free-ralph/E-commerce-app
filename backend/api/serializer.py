@@ -11,58 +11,59 @@ class RegisterUserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'username',
-            'email',
             'password',
         ]
         extra_kwargs = {
-            'password' : {'write_only' : True}
+            'password': {'write_only': True}
         }
+
     def validate(self, data):
         user = User(**data)
         password = data.get('password')
-        errors = dict() 
+        errors = dict()
         try:
             validators.validate_password(password=password, user=user)
         except exceptions.ValidationError as e:
             errors['password'] = list(e.messages)
-        
+
         if errors:
             raise serializers.ValidationError(errors)
-        
+
         return super(RegisterUserSerializer, self).validate(data)
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username = validated_data['username'],
-            email = validated_data['email'],
-            password = validated_data['password']
+            username=validated_data['username'],
+            password=validated_data['password']
         )
         return user
 
 
-
-class RandomUserSerializer(serializers.ModelSerializer): 
+class RandomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = RandomUsers
-        fields = "__all__"  
+        fields = "__all__"
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
-            'id', 
-            'username', 
-            'email', 
+            'id',
+            'username',
+            'email',
             'is_active'
         )
+
 
 class AccountInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id", 
+            "id",
             "username"
         ]
+
 
 class ProductSerializer(serializers.ModelSerializer):
 
@@ -71,12 +72,13 @@ class ProductSerializer(serializers.ModelSerializer):
         depth = 1
         fields = '__all__'
 
+
 class GetProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', )
 
-        
+
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -85,6 +87,7 @@ class CategorySerializer(serializers.ModelSerializer):
             'id',
             'name'
         ]
+
 
 class CartSizeSerializer(serializers.Serializer):
     size = serializers.SerializerMethodField()
@@ -97,7 +100,6 @@ class CartSizeSerializer(serializers.Serializer):
 
     def get_size(self, obj):
         return obj.order_product.count()
-    
 
 
 class CartItemSerializer(serializers.ModelSerializer):
@@ -119,17 +121,19 @@ class CartItemSerializer(serializers.ModelSerializer):
         )
         depth = 2
 
+
 class QuantitySerializer(serializers.Serializer):
     quantity = serializers.IntegerField()
     id = serializers.IntegerField()
+
 
 class CouponSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coupon
         fields = "__all__"
         extra_kwargs = {
-            'coupon_name' : {'required' : False},
-            'discount' : {'required' : False}
+            'coupon_name': {'required': False},
+            'discount': {'required': False}
         }
 
 
@@ -138,16 +142,18 @@ class ShippingDetialsSerializer(serializers.Serializer):
     first_name = serializers.CharField()
     last_name = serializers.CharField()
     payment_method = serializers.ChoiceField(
-        choices = (
-        ('PS', 'PatStack' ),
-        ('DE', 'Door Delivery' ),
-    ))
+        choices=(
+            ('PS', 'PatStack'),
+            ('DE', 'Door Delivery'),
+        ))
     address = serializers.CharField()
+
 
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PayWithPaystack
         fields = '__all__'
+
 
 class FavouritesSerializer(serializers.ModelSerializer):
     class Meta:

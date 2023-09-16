@@ -63,7 +63,7 @@ const Navbar = () => {
   return (
     <>
       <div className="w-full min-h-navbar border-b-2 border-muted text-primary">
-        <div className="mx-7 flex items-center h-16">
+        <div className="mx-7 flex items-center h-[9vh]">
           <Link to="/" className="font-bold w-1/4 text-pink-700">
             {AccountInfo?.username ? AccountInfo?.username : "TopShop"}
           </Link>

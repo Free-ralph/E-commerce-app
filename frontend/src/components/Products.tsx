@@ -40,7 +40,7 @@ const Products = ({
   const [activeProductDetail, setactiveProductDetail] = useState<ProductType>();
   const [searchValue, setsearchValue] = useState("");
 
-  const { mutate: addToCartMutate} = useMutation({
+  const { mutate: addToCartMutate } = useMutation({
     mutationFn: (id: number) => axiosPrivate.get(`add-to-cart/${id}`),
     onSuccess: () => {
       handleSnackMessage("item added to cart successfully", "success");
@@ -85,10 +85,10 @@ const Products = ({
     setcurrentPage(1);
   }, [filteredProducts]);
   return (
-    <div className=" text-primary flex w-full h-full relative">
-      <div className=" w-full md:w-[60%] lg:w-4/6 border-r-2 border-muted">
-        <div className=" w-11/12 flex mx-auto flex-col">
-          <div className="w-full flex flex-col mt-3 text-primary">
+    <div className=" text-primary flex w-full h-[90vh] pt-2">
+      <div className=" w-full md:w-[60%] lg:w-4/6 border-r-2 h-full border-muted">
+        <div className=" w-11/12 flex mx-auto flex-col h-full">
+          <div className="w-full flex flex-col text-primary">
             <div className="flex flex-col mx-auto w-full ">
               <div className="flex w-full h-14">
                 <button className="bg-muted rounded-l-xl border-0 px-4">
@@ -122,7 +122,7 @@ const Products = ({
                   initial="hidden"
                   animate="visible"
                   exit="hidden"
-                  className="flex flex-wrap gap-6 lg:gap-5 justify-between mt-2 md:h-[485px] md:overflow-scroll"
+                  className="flex flex-wrap gap-6 lg:gap-5 justify-between mt-2 md:h-full md:overflow-scroll"
                 >
                   {CurrentProducts.map((product, i) => (
                     <Card
@@ -156,7 +156,7 @@ const Products = ({
         </div>
       </div>
       {activeProductDetail ? (
-        <div className=" fixed z-50 h-full bototm-0 left-0 w-full top-0 md:static md:block md:w-[40%] lg:w-2/6">
+        <div className="fixed z-50 h-full bototm-0 left-0 w-full top-0 md:static md:block md:w-[40%] lg:w-2/6">
           <AnimatePresence>
             {activeProductDetail && (
               <m.div
@@ -171,15 +171,15 @@ const Products = ({
                   addProductToCart={addProductToCart}
                   {...activeProductDetail}
                 />
+                <div
+                  className="absolute bg-secondary p-4 left-3 top-3 md:hidden rounded-xl border-2 border-primary"
+                  onClick={() => setactiveProductDetail(undefined)}
+                >
+                  <ArrowBackIcon />
+                </div>
               </m.div>
             )}
           </AnimatePresence>
-          <div
-            className="absolute bg-secondary p-4 left-3 top-3 md:hidden rounded-xl border-2 border-primary"
-            onClick={() => setactiveProductDetail(undefined)}
-          >
-            <ArrowBackIcon />
-          </div>
         </div>
       ) : (
         <div className="hidden md:block fixed z-50 h-full  bototm-0 left-0 w-full top-0 md:static md:w-[40%] lg:w-2/6">

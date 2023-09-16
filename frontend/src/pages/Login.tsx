@@ -137,7 +137,7 @@ const Login = () => {
               onChange={(e) => setUsername(e.target.value)}
               className={`${
                 errorMessage?.username ? "border-red-500" : "border-primary"
-              }  rounded-xl border-1 p-4 my-5 bg-secondary focus:border-pink-300 focus:shadow-pink-300 focus:ring-pink-300  `}
+              }  rounded-xl border-1 p-4 mt-5 bg-secondary focus:border-pink-300 focus:shadow-pink-300 focus:ring-pink-300  `}
             />
             {errorMessage?.username && (
               <div className="w-full p-2 pl-2">
@@ -157,7 +157,7 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               className={`${
                 errorMessage?.password ? "border-red-500" : "border-primary"
-              } rounded-xl border-1 p-4 bg-secondary focus:border-pink-300 focus:shadow-pink-300 focus:ring-pink-300 `}
+              } rounded-xl border-1 p-4 mt-5 bg-secondary focus:border-pink-300 focus:shadow-pink-300 focus:ring-pink-300 `}
             />
             {errorMessage?.password && (
               <div className="w-full p-2 pl-2">

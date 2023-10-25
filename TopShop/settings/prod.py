@@ -1,6 +1,5 @@
 from .base import *
 from decouple import config
-import dj_database_url
 
 
 ALLOWED_HOSTS = ['.vercel.app', "127.0.0.1"]
@@ -54,9 +53,23 @@ LOGGING = {
         },
     }
 }
-DATABASES = {  
-    'default': dj_database_url.config(
-        default=config('DB_URL')
-    )
-}  
+DATABASES = {
+
+    'default': {
+
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+        'NAME': config('DB_USER'),
+
+        'USER': config('DB_USER'),
+
+        'PASSWORD': config('DB_PASSWORD'),
+
+        'HOST': config('DB_HOST'),
+
+        'PORT': '5432',
+
+    }
+
+}
 

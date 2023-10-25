@@ -8,11 +8,16 @@ https://docs.djangoproject.com/en/3.2/howto/deployment/wsgi/
 """
 
 import os
-
+from decouple import config
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.prod')
+DEBUG = config('DEBUG').lower() in ('true', 't', '1')
+
+if DEBUG:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.dev')
+else:
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'TopShop.settings.prod')
 
 application = get_wsgi_application()
 
-app = application
+# app = application

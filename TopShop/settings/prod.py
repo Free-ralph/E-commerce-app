@@ -2,7 +2,7 @@ from .base import *
 from decouple import config
 
 
-ALLOWED_HOSTS = ['.vercel.app', "127.0.0.1"]
+ALLOWED_HOSTS = ['.vercel.app', "topshop-m0sp.onrender.com"]
 DEBUG = False
 
 LOGGING = {

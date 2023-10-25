@@ -41,10 +41,13 @@ npm-debug.log
 *.map
 
 # General
+requirements2.txt
 /{{project_name}}-venv/
 /venv/
 virtualenv/
 /virtualenv/
+virtualVenv2/
+/virtualVenv2/
 /env/
 /output/
 /cache/
